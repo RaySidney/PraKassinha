@@ -73,6 +73,7 @@ body>div>button {
 
 .pulsating-button {
     animation: pulse 3s infinite alternate;
+    margin-top: 50px;
 }
 
 .pulsating-button:hover {
