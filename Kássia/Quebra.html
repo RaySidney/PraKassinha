@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pra Kássinha <3 </title>
+    <link rel="stylesheet" type="text/css" href="Style.css" media="screen"/>
+    <link rel="shortcut icon" type="imagex/png" href="coração.ico">
+</head>
+<body>
+    <div class="Container">
+        <button class="pulsating-button" onclick="startGame()">Iniciar Jogo</button>
+        <button id="botaoOculto" class="pulsating-button hidden" onclick="ocultarDiv()"> <3 </button>
+        <div class="Container2">
+            <div id="puzzleContainer"></div>
+            <div><img src="Quebracabeça2.png" alt="Referencia"></div>
+        </div>
+        
+        <iframe class="frame" style="border-radius:12px"
+            src="https://open.spotify.com/embed/track/4OKf7CcYuw5H2HptkcKxcP?utm_source=generator" width="40%" height="152"
+            frameBorder="0" allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
+        </iframe>
+    </div>
+
+    <div class="Texto">
+        <p>Dois anos de aventuras compartilhadas, altos e baixos. Parece que foi ontem quando te encontrei pela primeira vez e nossos corações começaram a bater no mesmo ritmo. Hoje, não venho só agradecer  o tempo que passamos juntos, mas sim o laço especial que criamos e tudo que você me ensinou a até hoje, mais do que conhecimentos gerais, você me ensinou a ser homem, e o que é amar de verdade.</p>
+
+        <p>Cada momento ao seu lado tem sido uma bênção, uma jornada de descobertas e crescimento. Você trouxe luz para os meus dias mais sombrios e calor para os meus momentos mais frios. Ter você na minha vida é como um abraço reconfortante que me faz sentir em casa, não importando quando longe eu esteja dela.</p>
+
+        <p>Nesses dois anos, aprendemos tanto um com o outro. Aprendemos a ser pacientes, a ser compreensivos e a apoiar um ao outro nas dificuldades da vida. Juntos, superamos obstáculos e celebramos conquistas, construindo memórias que serão tesouros para toda a vida.</p>
+                
+        <p>Hoje, olho para trás com gratidão por cada instante que compartilhamos e olho para o futuro com esperança de que possamos construir uma vida juntos. Sei que, com você ao meu lado, não há desafio que não possamos enfrentar e não há sonho que não possamos alcançar juntos.</p>
+
+        <p>Hoje, quero apenas expressar o quanto você significa para mim. Você é mais do que minha namorada, você é minha melhor amiga, minha confidente, meu porto seguro e minha fonte constante de felicidade. Obrigado por ser você e por escolher estar ao meu lado.</p>
+        <p>Que este seja apenas o começo de uma jornada ainda mais incrível juntos. Feliz 2 anos de namorooo, meu amor. Que continuemos a construir um futuro cheio de amor, companheirismo e aventuras inesquecíveis.</p>
+        <p>Com todo o carinho do mundo,
+        Ray.
+        </p>
+    </div>
+
+    <script>
+        // Lógica do quebra-cabeça em JavaScript
+        const imageSrc = 'Quebracabeça2.png'; // Caminho para sua imagem
+        const numPieces = 100; // Número de peças do quebra-cabeça
+        const pieceSize = 40; // Tamanho de cada peça em pixels
+        const gridSize = Math.sqrt(numPieces);
+        const puzzleContainer = document.getElementById('puzzleContainer');
+        let originalPositions = []; // Armazena as posições originais das peças
+
+        // Função para criar peças do quebra-cabeça
+        function createPuzzlePieces(imageSrc) {
+            const cellSize = 400 / gridSize;
+
+            // Criar matriz de posições sem repetição
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    originalPositions.push({ x: x * cellSize, y: y * cellSize });
+                }
+            }
+
+            originalPositions.forEach((position, index) => {
+                const piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.style.backgroundImage = `url('${imageSrc}')`;
+                piece.style.backgroundPosition = `-${position.x}px -${position.y}px`;
+                piece.style.width = `${pieceSize}px`;
+                piece.style.height = `${pieceSize}px`;
+                piece.style.left = `${position.x}px`;
+                piece.style.top = `${position.y}px`;
+                piece.setAttribute('data-index', index);
+                piece.setAttribute('draggable', true);
+                piece.addEventListener('dragstart', dragStart);
+                piece.addEventListener('dragover', dragOver);
+                piece.addEventListener('drop', drop);
+                puzzleContainer.appendChild(piece);
+            });
+        }
+
+        // Função para iniciar o jogo
+        function startGame() {
+            shufflePieces();
+            createStars();
+        }
+
+        // Função para embaralhar as peças
+        function shufflePieces() {
+            const positions = originalPositions.slice(); // Cópia das posições originais
+            const pieces = document.querySelectorAll('.piece');
+
+            pieces.forEach((piece, index) => {
+                const randomIndex = Math.floor(Math.random() * positions.length);
+                const position = positions.splice(randomIndex, 1)[0]; // Remove a posição escolhida aleatoriamente
+                piece.style.left = `${position.x}px`;
+                piece.style.top = `${position.y}px`;
+            });
+        }
+
+        // Função para lidar com o início da operação de arrastar
+        function dragStart(event) {
+            event.dataTransfer.setData('text/plain', event.target.getAttribute('data-index'));
+        }
+
+        // Função para lidar com a entrada do cursor enquanto arrasta
+        function dragOver(event) {
+            event.preventDefault();
+        }
+
+        // Função para lidar com o soltar da peça arrastada
+        function drop(event) {
+            event.preventDefault();
+            const fromIndex = parseInt(event.dataTransfer.getData('text/plain'));
+            const toIndex = parseInt(event.target.getAttribute('data-index'));
+            swapPieces(fromIndex, toIndex);
+
+            if (checkIfSolved()) {
+            }
+        }
+
+        // Função para trocar as posições das peças
+        function swapPieces(fromIndex, toIndex) {
+            const fromPiece = puzzleContainer.querySelector(`[data-index="${fromIndex}"]`);
+            const toPiece = puzzleContainer.querySelector(`[data-index="${toIndex}"]`);
+
+            // Trocar as posições das peças
+            const tempLeft = fromPiece.style.left;
+            const tempTop = fromPiece.style.top;
+            fromPiece.style.left = toPiece.style.left;
+            fromPiece.style.top = toPiece.style.top;
+            toPiece.style.left = tempLeft;
+            toPiece.style.top = tempTop;
+
+            // Atualizar os atributos data-index das peças
+            fromPiece.setAttribute('data-index', toIndex);
+                    toPiece.setAttribute('data-index', fromIndex);
+                }
+
+                // Função para verificar se o quebra-cabeça foi resolvido
+                function checkIfSolved() {
+                    const pieces = document.querySelectorAll('.piece');
+                    let allCorrect = true;
+
+                    for (let i = 0; i < pieces.length; i++) {
+                        const piece = pieces[i];
+                        const correctPositionX = (i % gridSize) * pieceSize;
+                        const correctPositionY = Math.floor(i / gridSize) * pieceSize;
+                        const currentLeft = parseInt(piece.style.left);
+                        const currentTop = parseInt(piece.style.top);
+
+                        if (correctPositionX !== currentLeft || correctPositionY !== currentTop) {
+                            allCorrect = false;
+                            break; // Se uma peça estiver incorreta, não precisamos verificar as outras
+                        }
+                    }
+
+                    if (allCorrect) {
+                        // Se todas as peças estiverem corretas, mostramos o botão oculto
+                        document.getElementById('botaoOculto').classList.remove('hidden');
+                    } else {
+                        // Se houver pelo menos uma peça incorreta, ocultamos o botão
+                        document.getElementById('botaoOculto').classList.add('hidden');
+                    }
+
+                    return allCorrect;
+                }
+
+
+
+                // Função para criar estrelas no fundo da página
+                function createStars() {
+                    const numStars = 100; // Número de estrelas desejado
+                    const body = document.body;
+
+                    for (let i = 0; i < numStars; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'star';
+                        star.style.left = `${Math.random() * 100}vw`;
+                        star.style.top = `${Math.random() * 100}vh`;
+                        star.style.animationDuration = `${Math.random() * 5 + 1}s`; 
+                        body.appendChild(star);
+                    }
+                }
+                function ocultarDiv() {
+                    var div = document.querySelector(".Container");
+                    var divtexto = document.querySelector(".Texto");
+                    var frame = document.querySelector(".frame");
+                    div.classList.add("hidden"); // Adicionando a classe "hidden" para ocultar a div
+                    frame.classList.add("hidden")
+                    divtexto.classList.remove("hidden");
+
+                    
+                }
+                // Inicializar o quebra-cabeça e as estrelas
+                createPuzzlePieces(imageSrc);
+                createStars();
+            </script>
+</body>
+</html>
+ 
